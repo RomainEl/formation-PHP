@@ -24,7 +24,7 @@ $pdo = new PDO('mysql:host=localhost;dbname=site',
                 ));
 
 //Chemin du site
-define('RACINE_SITE','formation-PHP/PHP/PHP/site/');
+define('RACINE_SITE','/formation-PHP/PHP/PHP/site/');
 
 $contenu='';
 $contenu_gauche='';

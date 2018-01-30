@@ -8,11 +8,11 @@ $categories = executeRequete("SELECT DISTINCT categorie FROM produit ORDER BY ca
 
 $contenu_gauche .= '<p class="lead">Catégories</p>
 <div class="list-group">
-<a href="?categorie=all" class="list-group-item">Toutes</a>';
+<a href="?categorie=all" class="list-group-item '.(!isset($_GET['categorie']) || (isset($_GET['categorie']) && $_GET['categorie']=='all') ? 'active' : '' ).'">Toutes</a>';
 
 while($cat = $categories ->fetch(PDO::FETCH_ASSOC))
 {
-    $contenu_gauche .= '<a href="?categorie='.$cat['categorie'].'"class="list-group-item">'.ucfirst($cat['categorie']).'</a>';
+    $contenu_gauche .= '<a href="?categorie='.$cat['categorie'].'"class="list-group-item '.(isset($_GET['categorie']) && ($_GET['categorie'])==$cat['categorie'] ? 'active' :''). '">'.ucfirst($cat['categorie']).'</a>';
 }
 $contenu_gauche .= '</div>';
 
@@ -20,11 +20,11 @@ $couleurs = executeRequete("SELECT DISTINCT couleur FROM produit ORDER BY couleu
 
 $contenu_gauche .= '<p class="lead">Couleurs</p>
 <div class="list-group">
-<a href="?couleur=all" class="list-group-item">Toutes</a>';
+<a href="?couleur=all" class="list-group-item '.(!isset($_GET['couleur']) || (isset($_GET['couleur']) && $_GET['couleur'] == 'all') ? 'active' : '').'">Toutes</a>';
 
 while($color = $couleurs ->fetch(PDO::FETCH_ASSOC))
 {
-    $contenu_gauche .= '<a href="?couleur='.$color['couleur'].'"class="list-group-item">'.ucfirst($color['couleur']).'</a>';
+    $contenu_gauche .= '<a href="?couleur='.$color['couleur'].'"class="list-group-item '.(isset($_GET['couleur']) && ($_GET['couleur'])==$color['couleur'] ? 'active' :''). '">'.ucfirst($color['couleur']).'</a>';
 }
 
 $contenu_gauche .= '</div>';
