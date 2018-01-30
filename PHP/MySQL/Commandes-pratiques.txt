@@ -1,0 +1,259 @@
+//  Créer une base
+CREATE DATABASE toto
+
+//  Voir ses bases
+SHOW DATABASES
+
+// Precision de la base sur laquelle on travaille
+USE toto
+
+// Suppression d'une base
+DROP DATABASE toto
+
+// Creer une table
+CREATE table
+
+// Effacer une table
+DROP TABLE employes
+
+// Vide la table et réinitialise les index
+TRUNCATE employes
+
+// description d'une table
+DESC employes
+
+//  sélectionner en fonction d'un champ sur une table
+SELECT nom FROM employes 
+
+// Faire un affichage plus fin
+SELECT nom, prenom FROM employes WHERE prenom='Chloe'
+
+// Afficher les valeurs différentes du champ concerné
+SELECT DISTINCT service FROM employes
+
+d% : toute chaine de caractère qui commence par d
+%n : toute chaine de caractère qui se termine par n
+%mi% : toute chaine qui comporte la chaine 'mi'
+
+// délimiteur
+LIMIT 3,3
+=> affiche 3 champs à partir du 4eme (apres le 3eme champ)
+
+// faire une moyenne
+SELECT AVG(salaire) FROM employes
+
+// arrondi de la moyenne
+SELECT ROUND(AVG(salaire)) FROM employes
+
+// Requete imbriquée
+SELECT prenom,salaire FROM employes =(SELECT MIN (salaire) FROM employes)
+=> sélection et affichage de la personne dont le salaire est le plus bas
+
+// sélection des champs désirés
+SELECT * FROM employes WHERE service IN ('informatique','comptabilite','direction')
+
+// selection des champs autres que ceux selectionnés
+SELECT * FROM employes WHERE service NOT IN ('informatique','comptabilite','direction')
+
+REPLACE INTO fonctionne comme un insert si l'id n'existe pas et comme une mise
+à jour si l'id existe déjà. Cette fonction est surtout utilisée quand on a 
+l'intégralité du champ à réécrire. 
+
+
+//************************** EXERCICES *********************************//
+
+1.  Inserer une nouvelle ville dans localite(secteur et CA au choix)
+INSERT INTO localite(id_secteur,ville,chiffre_affaires) VALUES (60,'Montcuq', 122654)
+ou 
+INSERT INTO localite VALUES (NULL,...)
+
+2.  Quel est le prénom de l'employé 547?
+SELECT prenom FROM employes WHERE id_employes=547
+
+3.  Quel est le salaire d'Amandine ?
+SELECT salaire FROM employes WHERE prenom='Amandine'
+
+4.  Combien d'employés gagnent 2000$/mois ?
+SELECT COUNT(*) FROM employes WHERE salaire= 2000
+
+5.  Afficher les employés du service commercial.
+SELECT * FROM employes WHERE service='commercial'
+
+6.  Afficher les employés embauchés durant l'année 2010
+SELECT * FROM employes WHERE date_embauche BETWEEN '2010-01-01' AND '2010-12-31'
+ou 
+SELECT * FROM employes WHERE date_embauche LIKE '2010%'
+ou 
+SELECT * FROM employes WHERE date_embauche >= '2010-01-01' AND date_embauche <='2010-12-31'
+
+7.  Afficher l'employé ayant le salaire le plus élevé
+SELECT * FROM employes WHERE salaire = (SELECT MAX(salaire) FROM employes)
+
+8.  Quel est le nom de Guillaume?
+SELECT nom FROM employes WHERE prenom='Guillaume'
+
+BONUS
+9.  Afficher tous les employes sauf ceux du service de production et secretariat
+SELECT * FROM employes WHERE service NOT IN ('production','secretariat')
+
+10. Afficher les infos de l'employé le mieux payé du service commercial
+SELECT * FROM employes WHERE salaire=(SELECT MAX(salaire)FROM employes WHERE service='commercial')
+
+/**************************************************************************************************/*
+
+MYSQL en Shell
+lancer : mysql -u root -p
+
+
+
+
+Les JOINTURES
+
+ex: sélectionner les dates de rendu et dates de sorties pour Guillaume
+
+select a.prenom, e.date_sortie, e.date_rendu from abonne a, emprunt e where a.id_abonne= e.id_abonne and a.prenom='guillaume';
+
+autre ex:  les mouvements des livres d'alphonse daudet
+
+select e.date_sortie, e.date_rendu from emprunt e, livre l where l.id_livre= e.id_livre and l.auteur='ALPHONSE DAUDET';
+ ou 
+select date_sortie, date_rendu from emprunt where id_livre in (select id_livre from livre where auteur='ALPHONSE DAUDET');
+
+
+create function calcul_tva (nb int, taux float) returns text
+    -> comment 'fonction calculant la tva'
+    -> reads sql data
+    -> begin
+    -> return concat_ws(': ','Le resultat est ', round((nb*taux),2));
+    -> end $
+
+Reads sql data -> fonctions de lecture(select, fetch)
+modifies sql data -> fonctions d'écriture (insert, update, delete)
+contains sql -> indique que la fonction ne fait ni lecture,ni écriture
+no sql -> aucune instruction sql
+
+/*********************************************************************
+
+TABLES VIRTUELLES :
+
+LES VUES:  Ce sont des tables virtuelles (dépendente des autres tables) et dynamiques(qui s'adaptent
+aux modifications faites dans les tables réelles).La vue est conservée (jusqu'a suppression)
+Syntaxe:
+CREATE VIEW nom_vue AS SELECT ...
+Visible depuis l'instruction SHOW FULL TABLES
+
+LES TABLES TEMPORAIRES: tables virtuelles qui ne sont pas dynamiques et qui
+disparaissent une fois la session sql fermée.La table est figée, c'est une photo instantanée de la requête.
+Syntaxe:
+CREATE TEMPORARY TABLE nom_table_tempo AS SELECT ...
+N'est pas visible depuis l'instruction SHOW FULL TABLES
+
+/********************************************************************
+
+TRANSACTIONS :
+
+>démarrage de la transaction:
+START TRANSACTION;
+...
+...
+...
+
+COMMIT => valide et termine la transaction
+ROLLBACK => annule et termine la transaction
+
+_________________________________________________________
+
+>avec Points de sauvegarde (de reprise)
+
+START TRANSACTION;
+....
+SAVEPOINT nom_point_de_sauvegarde1
+...
+SAVEPOINT nom_point_de_sauvegarde2
+...
+SAVEPOINT nom_point_de_sauvegarde3
+...
+
+ROLLBACK TO nom_point_de_sauvegarde2 => annule les opérations qui se situent
+après le point de sauvegarde.
+
+/**************************************************************************
+
+LES CONTRAINTES:
+
+Syntaxe:
+ALTER TABLE article
+  ADD CONSTRAINT article_ibfk_1 FOREIGN KEY (id_fourn) REFERENCES fournisseur (id_fournisseur);
+
+Ici on ajoute une contrainte sur la table article qui relie le champ 'id_fourn' au champ
+'id_fournisseur' de la table fournisseur;
+
+NB: Le type de table doit être innoDB
+
+ALTER TABLE article
+  ADD CONSTRAINT article_ibfk_1 FOREIGN KEY (id_fourn) REFERENCES fournisseur (id_fournisseur)
+  ON DELETE RESTRICT ON UPDATE CASCADE;
+
+- ON DELETE : ce qui se passe si on tente de supprimer l'enregistrement de la table fournisseur
+- ON UPDATE : ce qui se passe si on tente de modifier le champ id_fournisseur de la table fournisseur
+
+RESTRICT
+NO ACTION 
+=> Dans l'absolu ces 2 termes font la meme chose : interdire l'opération.
+RESTRICT fait l'opération puis la restaure. Dans certains cas, il est possible de s'intercaler entre 
+le moment où l'opération (delete ou update) est faite et où elle est restaurée.
+ex: log sur les tentatives de suppression.
+NO ACTION interdit simplement l'opération.
+
+CASCADE
+Répercuter l'opération delete ou update sur la table article dès que je supprime ou modifie un fournisseur
+de la table fournisseur.
+/!\ Cascade sur DELETE efface tous les articles du fournisseur supprimé.
+
+SET NULL
+fonctionne uniquement sur les champs pour lesquels NULL est autorisé.
+Si je supprime un fournisseur en ayant fixé ON DELETE SET NULL, tous les articles
+qui pointeront sur ce fournisseur verront leur champ id_fourn changé à la valeur NULL.
+
+
+/************************************************************************************************************
+
+EXERCICES
+Sur la base Taxis
+
+1. La société de Taxis aimerait que l'on ne puisse pas faire de mauvaise association lors de la saisie.
+ex: conducteur 50 avec le véhicule 900 car ni l'un ni l'autre n'existent.
+
+2. Lorsque la société de Taxis modifie l'id d'un conducteur, elle aimerait que cela soit répercuté dans la 
+table d'association.
+
+3. La société aimerait que l'on ne puisse pas supprimer un conducteur tant que celui ci conduit un véhicule
+
+4. Lorsque la société de Taxis modifie l'id d'un véhicule, elle aimerait que cela soit répercuté dans la 
+table d'association
+
+5. Lorsque la société supprime un conducteur, elle aimerait garder la présence de l'association pour réaffecter
+un conducteur à un véhicule.
+
+6. Qui (nom,prenom) conduit la voiture portant l'id 503 ?
+    (2 méthodes attendues)
+
+select nom,prenom from conducteur where id_conducteur in (select id_conducteur from association_vehicule_conducteur where id_vehicule= 503);
+ou 
+ select c.prenom,c.nom from conducteur c, association_vehicule_conducteur a where c.id_conducteur=a.id_conducteur and a.id_vehicule= 503;
+
+7. Qui conduit quoi ?
+select c.prenom,c.nom,v.marque,v.modele, from conducteur c, association_vehicule_conducteur a, vehicule v where c.id_conducteur=a.id_conducteur and a.id_vehicule= v.id_vehicule;
+
+8. Ajoutez vous dans la liste des conducteurs.
+insert into conducteur values(null,'Romain','Elie');
+
+9. Afficher tous les conducteurs associés à leur véhicule, même les conducteurs sans véhicule.
+ select c.prenom,c.nom,a.id_vehicule  from conducteur c left join association_vehicule_conducteur a on c.id_conducteur = a.id_conducteur;
+
+10. Ajouter un véhicule
+
+11. Afficher tous les véhicules associés à leur conducteur, même les véhicules sans conducteurs.
+ select v.marque,v.modele,a.id_conducteur from vehicule v left join association_vehicule_conducteur a on v.id_vehicule = a.id_vehicule;
+ 
+12. Afficher les résultats de la question 9  et 11  en une seule requête

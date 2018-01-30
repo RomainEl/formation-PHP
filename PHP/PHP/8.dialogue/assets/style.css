@@ -1,0 +1,16 @@
+.message{
+    background-image: url("images/Alien_Ink_2560X1600_Abstract_Background_1.jpg");
+    border : 1px solid;
+    border-radius : 20px;
+}
+.titre{
+    font-family: 'Teko', sans-serif;
+    text-align: justify;
+    padding:10px;
+    font-size: 125%;
+}
+
+.contenu{
+    font-family: 'Josefin Sans', sans-serif;
+    padding:10px;
+}

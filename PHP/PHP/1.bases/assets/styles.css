@@ -1,0 +1,13 @@
+h1, h2{
+    margin : 0;
+    font-size:30px ;
+    color: dodgerblue;
+}
+
+td{
+    border: 1px solid black;
+}
+
+body{
+    background: darkgoldenrod;
+}

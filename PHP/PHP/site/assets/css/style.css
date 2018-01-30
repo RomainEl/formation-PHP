@@ -1,0 +1,29 @@
+body {
+    padding-top:70px;
+}
+
+footer{
+    margin:50px 0;
+}
+
+.main{
+    min-height: 80vh;
+}
+
+#titre-form{
+   text-align: center;
+   margin: 15px;
+   padding-left: 3.3em;
+}
+
+.img-thumbnail{
+    width:100px;
+    height:100px;
+}
+
+.img-responsive{
+    min-height: 400px;
+}
+.hauteur{
+    min-height:600px;
+}
