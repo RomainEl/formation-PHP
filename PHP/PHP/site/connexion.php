@@ -6,7 +6,9 @@ require_once('assets/init.php');
 // traitement
 if(isset($_GET['action']) && $_GET['action'] == 'deconnexion')
 {
-    session_destroy();
+    //session_destroy();
+    unset($_SESSION['membre']);
+    //pour conserver le panier à la déconnexion;
 }
 if(estConnecte()){
     header('location:profil.php'); // renvoie un entete au client pour demander la page profil
