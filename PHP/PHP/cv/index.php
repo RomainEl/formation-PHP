@@ -1,3 +1,26 @@
+<?php
+	 require_once('admin/init.php');
+
+	 if ( $_POST)
+	 {
+		 
+		 if (!empty($_POST['email']) 
+			  && !empty($_POST['objet'])
+			  && !empty ($_POST['msg'])
+		 )
+		 {
+			 $email = htmlspecialchars($_POST['email']);	
+			 $objet = htmlspecialchars($_POST['objet'],ENT_QUOTES);
+			 $msg = htmlspecialchars($_POST['msg'],ENT_QUOTES);
+	 
+			 $req = $base->prepare("INSERT INTO messages VALUES (NULL,:email,:objet,:msg,NOW())");
+			 $req->execute(array('email' => $email,
+								 'objet' => $objet,
+								 'msg' => $msg));
+		 }
+	 
+	 }
+?>
 <!DOCTYPE html>
 <html>
 	<head>
@@ -49,42 +72,36 @@
 				<div class="block30">
 					<h2>Compétences</h2>
 					<ul>
-						<li>
-							<h3>Sourire le matin</h3>
-							<div class="jauge_fond">
-								<div class="jauge_couleur" style="background: #87c6bf; width:60%">
-								
-								</div>
-							</div>
-						</li>
-						<li>
-							<h3>Faire le café</h3>
-							<div class="jauge_fond">
-								<div class="jauge_couleur" style="background: #ffd1ae; width: 15%"
-								</div>
-							</div>
-						</li>
-						<li>
-							<h3>Rentrer tard du travail</h3>
-							<div class="jauge_fond">
-								<div class="jauge_couleur" style="background: #a6e59d; width: 45%"
-								</div>
-							</div>
-						</li>
+						<?php
+						$competences = $base->query("SELECT * FROM competences");
+
+						while($competence =$competences->fetch(PDO::FETCH_ASSOC))
+						{
+							echo '<li>
+									<h3>'.$competence['titre'].'</h3>
+									<div class="jauge_fond">
+										<div class="jauge_couleur" style="background:'.$competence['couleur'].' ; width:'.$competence['pourcentage'].'%;">
+											
+										</div>
+									</div>
+								</li>';
+						} 
+						?>
 					</ul>
 				</div>
 				<div class="block100 ligne">
 					<h2>Mes langages favoris</h2>
-					<div class="block25">
-						<img src="images/html.jpg" alt="html">
-					</div>
-					<div class="block25">
-						<img src="images/css.jpg" alt="css">
-					</div>
-					<div class="block25">
-						<img src="images/php.jpg" alt="php"></div>
-					<div class="block25">
-						<img src="images/mysql.jpg" alt="mysql"></div>
+					<?php
+
+					$langages= $base->query("SELECT * FROM langages");
+
+					while($langage = $langages->fetch(PDO::FETCH_ASSOC))
+					{
+						echo'<div class="block25">
+								<img src="'.$langage['image'].'" alt="'.$langage['alt'].'">
+							</div>';
+					}
+					?>
 				</div>
 			</div>
 		</section>
@@ -92,64 +109,22 @@
 			<div id="link2"></div>
 			<div class="conteneur ligne">
 				<h2>Réalisations</h2>
-				<div class="block33">
-				<figure>
-				<img src="images/image1.jpg" alt="réalisation 1">
-				<figcaption>
-				<h3>
-					<a href="">Ma légende</a>
-				</h3>
-				</figcaption>
-				</figure>
-				</div>
-				<div class="block33">
-				<figure>
-				<img src="images/image2.jpg" alt="réalisation 1">
-				<figcaption>
-				<h3>
-					<a href="">Ma légende</a>
-				</h3>
-				</figcaption>
-				</figure>
-				</div>
-				<div class="block33">
-				<figure>
-				<img src="images/image3.jpg" alt="réalisation 1">
-				<figcaption>
-				<h3>
-					<a href="">Ma légende</a>
-				</h3>
-				</figcaption>
-				</figure>
-				</div>
-				<div class="block33">
-				<figure>
-				<img src="images/image4.jpg" alt="réalisation 1">
-				<figcaption>
-				<h3>
-					<a href="">Ma légende</a>
-				</h3>
-				</figcaption>
-				</figure>
-				</div><div class="block33">
-				<figure>
-				<img src="images/image5.jpg" alt="réalisation 1">
-				<figcaption>
-				<h3>
-					<a href="">Ma légende</a>
-				</h3>
-				</figcaption>
-				</figure>
-				</div><div class="block33">
-				<figure>
-				<img src="images/image6.jpg" alt="réalisation 1">
-				<figcaption>
-				<h3>
-					<a href="">Ma légende</a>
-				</h3>
-				</figcaption>
-				</figure>
-				</div>
+				<?php
+					$realisations = $base->query("SELECT * FROM realisations");
+
+					while($realisation = $realisations->fetch(PDO::FETCH_ASSOC)){
+						echo'<div class="block33">
+								<figure>
+									<img src="'.$realisation['image'].'" alt="'.$realisation['alt'].'">
+									<figcaption>
+										<h3>
+											<a href="">'.$realisation['legende'].'</a>
+										</h3>
+									</figcaption>
+								</figure>
+							</div>';
+					}
+            ?>
 			</div>
 		</section>
 		<section id="section3" class="couleur3">
@@ -157,55 +132,61 @@
 			<div class="conteneur ligne">
 				<div class="block66">
 					<h2>Expériences</h2>
-					<table>
-						<tr>
-							<td class="year" rowspan="2">2010
-								<p>2008</p>
-							</td>
-							<td class="job">Developpeur intégrateur web.</td>
-						</tr>
-						<tr>
-							<td class="job_desc">Ceci est la description de mon travail dans cette entreprise.</td>
-						</tr>
-					</table>
-					<table>
-						<tr>
-							<td class="year" rowspan="2">2010
-								<p>2008</p>
-							</td>
-							<td class="job">Developpeur intégrateur web.</td>
-						</tr>
-						<tr>
-							<td class="job_desc">Ceci est la description de mon travail dans cette entreprise.</td>
-						</tr>
-					</table>
+					<?php
+					$experiences = $base->query("SELECT * FROM experiences ORDER BY date_debut DESC");
+
+					while($experience= $experiences->fetch(PDO::FETCH_ASSOC))
+					{
+						//Si annee_deb est un DateTime en SQL
+						$date_formatee=new DateTime($experience['date_debut']);
+						$date_debut= $date_formatee->format('d/m/Y');
+						echo'<table>
+								<tr>
+									<td class="year" rowspan="2">'.$experience['date_debut'].'
+										<p>'.$experience['date_fin'].'</p>
+									</td>
+									<td class="job">'.$experience['job'].'</td>
+								</tr>
+								<tr>
+									<td class="job_desc">'.$experience['job_desc'].'</td>
+								</tr>
+							</table>';
+					}
+					?>
 				</div>
 				<div class="block33 couleur1">
 					<h2>Formation</h2>
-					<table>
-						<tr>
-							<td class="year" rowspan="2">2017
-								<p></p>
-							</td>
-							<td class="job">Webforce3</td>
-						</tr>
-						<tr>
-							<td class="job_desc">Ceci est la description de mon travail dans cette entreprise.</td>
-						</tr>
-					</table>
+					<?php
+					$formations = $base->query("SELECT * FROM formations ORDER BY date_debut DESC");
+
+					while($formation= $formations->fetch(PDO::FETCH_ASSOC))
+					{
+						echo'<table>
+								<tr>
+									<td class="year" rowspan="2">'.$formation['date_debut'].'
+										<p>'.$formation['date_fin'].'</p>
+									</td>
+									<td class="job">'.$formation['intitule'].'</td>
+								</tr>
+								<tr>
+									<td class="job_desc">'.$formation['resume'].'</td>
+								</tr>
+							</table>';
+					}
+					
+					?>
 				</div>
 			</div>
 		</section>
 		<?php
-		var_dump($_POST);
-		if ($_POST){
+		/*if ($_POST){
 			$expediteur   = 'From: '.$_POST['email'];
 			$destinataire = 'elie_romain@hotmail.com';
 			$sujet        = $_POST['objet'];
 			$message      = $_POST['zonedetexte'];
 
 			mail($destinataire,$sujet,$message,$expediteur);
-		}
+		}*/
 		?>
 		<section id="section4" class="couleur4">
 			<div id="link4"></div>
@@ -220,12 +201,12 @@
 				<div class="block50">
 					<h2>Contactez-moi</h2>
 					<form method="post" action="" enctype="multipart/form-data">
-						<label for="monemail">Email</label>
-						<input type="email" name="email" id="monemail" placeholder="Entrez votre email" required> 
-						<label for="monobjet">objet</label>
-						<input type="text" name="objet" id="monobjet" placeholder="Votre objet ici"required>
-						<label for="mazonedetexte"></label>
-						<textarea id="mazonedetexte" name="zonedetexte" placeholder="Votre message ici"required></textarea>
+						<label for="email">Email</label>
+						<input type="email" name="email" id="email" placeholder="Entrez votre email" required> 
+						<label for="objet">objet</label>
+						<input type="text" name="objet" id="objet" placeholder="Votre objet ici"required>
+						<label for="msg"></label>
+						<textarea id="msg" name="msg" placeholder="Votre message ici"required></textarea>
 						<input type="submit" name="envoyer" value="Envoyer">						
 					</form>
 				</div>

@@ -17,7 +17,6 @@ body{
 }
 .conteneur{
 	width: 960px;	
-	border: 1px dotted red;
 	margin:0 auto;
 }
 h2,h3,h4,h5,h6{
@@ -38,7 +37,7 @@ a{
 	background-color:#393939;
 }
 .couleur4{
-	background-color:#94D500;
+	background-color:#506560;
 }
 #link1,#link2,#link3,#link4{
 	position: relative;

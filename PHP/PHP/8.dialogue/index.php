@@ -46,7 +46,7 @@
             $_POST['message'] = strip_tags($_POST['message']);
             */
             /* 
-            htmlspecialchars() permet de rendre inoffensicves les balises html            
+            htmlspecialchars() permet de rendre inoffensives les balises html            
             */
             $_POST['message'] = htmlspecialchars($_POST['message']);
             $sql="INSERT INTO commentaire VALUES(NULL,'$_POST[pseudo]','$_POST[message]',NOW())";

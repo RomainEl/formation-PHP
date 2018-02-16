@@ -28,7 +28,7 @@ function executeRequete($sql, $params=array())
     {
         foreach($params as $indice => $param)
         {
-            $params[$indice] = htmlspecialchars($param, ENT_QUOTES);
+            $params[$indice] = htmlspecialchars($param,ENT_QUOTES);
         }
     }
     global $pdo;
